@@ -30,6 +30,6 @@ public class UserModel
     [Range(-1000, 1000000, ErrorMessage = "Balance must be between -1000 and 1,000,000!")]
     public decimal Balance { get; set; }
 
-    // public byte[] PasswordHash { get; set; }
-    // public byte[] PasswordSalt { get; set; }
+     public byte[] PasswordHash { get; set; }
+    public byte[] PasswordSalt { get; set; }
 }

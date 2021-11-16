@@ -10,18 +10,15 @@ namespace API.DTOs
     public class TransactionDto
     {
 
-    [JsonProperty("User ID")]
-    [Required]
-    public int UserId { get; set; }
+        [JsonProperty("User ID")]
+        [Required]
+        public int UserId { get; set; }
 
-    [Required]
-    public UserDto User { get; set; }
+        [JsonProperty("Amount")]
+        [Required]
+        public decimal Amount { get; set; }
 
-    [JsonProperty("Amount")]
-    [Required]
-    public decimal Amount { get; set; }
-
-    [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+        [JsonProperty("Notice")]
+        public string Notice { get; set; }
     }
 }

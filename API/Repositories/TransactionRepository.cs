@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Transactions;
 using API.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
@@ -16,25 +15,15 @@ namespace API.Repositories
         {
             _dataContext = dataContext;
         }
-        
-        public Task<TransactionModel> CreateTransaction(TransactionDto transaction)
+
+        public async Task<IEnumerable<TransactionModel>> GetTransactionsByUserId(int userId)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Transactions.Where(x => x.UserId == userId).ToListAsync();
         }
 
-        public Task<TransactionModel> DeleteTransaction(int id)
+        public async Task<IEnumerable<TransactionModel>> GetAllTransactions()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<TransactionModel>> GetAllTransactionaByUser(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<TransactionModel>> GetAllTransactions()
-        {
-            throw new NotImplementedException();
+            return await _dataContext.Transactions.ToListAsync();
         }
 
         public async Task<TransactionModel> GetTransactionById(int id)
@@ -48,19 +37,64 @@ namespace API.Repositories
             return result;
         }
 
-        public Task<IEnumerable<TransactionModel>> GetTransactionsByDate(DateTime date)
+        public async Task<IEnumerable<TransactionModel>> GetTransactionsByDate(DateTime date)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Transactions.Where(x => x.CreatedAt == date).ToListAsync();
         }
 
-        public Task<IEnumerable<TransactionModel>> GetTransactionsByUserAndDate(int userId, DateTime date)
+        public async Task<IEnumerable<TransactionModel>> GetTransactionsByUserIdAndDate(int userId, DateTime date)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Transactions.Where(x => x.UserId == userId && x.CreatedAt == date).ToListAsync();
         }
 
-        public Task<TransactionModel> UpdateTransaction(TransactionDto transaction)
+        public async Task<TransactionModel> CreateTransaction(TransactionDto transaction)
         {
-            throw new NotImplementedException();
+            var user = await _dataContext.Users.FindAsync(transaction.UserId);
+
+            user.Balance += transaction.Amount;
+
+            var result = new TransactionModel
+            {
+                UserId = transaction.UserId,
+                Amount = transaction.Amount,
+                CreatedAt = DateTime.UtcNow,
+                Notice = transaction.Notice
+            };
+
+            _dataContext.Users.Update(user);
+            await _dataContext.Transactions.AddAsync(result);
+            await _dataContext.SaveChangesAsync();
+
+            return result;
+        }
+
+        public async Task<TransactionModel> UpdateTransaction(int id, TransactionDto transaction)
+        {
+            var result = _dataContext.Transactions.FirstOrDefault(x => x.Id == id);
+            if (result == null)
+            {
+                return null;
+            }
+
+            result.Amount = transaction.Amount;
+            result.Notice = transaction.Notice;
+
+            _dataContext.Transactions.Update(result);
+            await _dataContext.SaveChangesAsync();
+
+            return result;
+        }
+        public async Task<TransactionModel> DeleteTransaction(int id)
+        {
+            var result = _dataContext.Transactions.FirstOrDefault(x => x.Id == id);
+            if (result == null)
+            {
+                return null;
+            }
+            _dataContext.Transactions.Remove(result);
+            await _dataContext.SaveChangesAsync();
+
+            return result;
         }
     }
 }

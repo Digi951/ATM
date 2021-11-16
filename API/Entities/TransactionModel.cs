@@ -10,12 +10,11 @@ public class TransactionModel
     public int UserId { get; set; }
 
     [Required]
-    public UserModel User { get; set; }
-
-    [Required]
     [Display(Name = "Amount")]
     public decimal Amount { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    public string Notice { get; set; }
 }
