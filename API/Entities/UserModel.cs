@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 public class UserModel
@@ -19,4 +20,16 @@ public class UserModel
     [Display(Name = "Email")]
     [EmailAddress(ErrorMessage = "Invalid Email Address!")]
     public string Email { get; set; }
+    
+    [Required]
+    [Display(Name = "Created On")]
+    public DateTime CreatedOn { get; set; }
+
+    [Required]
+    [Display(Name = "Balance")]
+    [Range(-1000, 1000000, ErrorMessage = "Balance must be between -1000 and 1,000,000!")]
+    public decimal Balance { get; set; }
+
+    // public byte[] PasswordHash { get; set; }
+    // public byte[] PasswordSalt { get; set; }
 }
