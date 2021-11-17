@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controller
 {
-    [Route("api/[controller]")]
-    public class TransactionController : ControllerBase
+    public class TransactionController : BaseApiController
     {
         private readonly ITransactionRepository _transactionRepository;
 
@@ -57,7 +56,7 @@ namespace API.Controller
         //POST: api/Transaction/CreateTransaction
         [HttpPost]
         [Route("CreateTransaction")]
-        public async Task<IActionResult> CreateTransaction([FromBody] TransactionDto transaction)
+        public async Task<IActionResult> CreateTransaction(TransactionDto transaction)
         {
             if (transaction is null)
             {
@@ -67,7 +66,7 @@ namespace API.Controller
             var result = await _transactionRepository.CreateTransaction(transaction);
             if (result is null)
             {
-                return BadRequest();
+                return BadRequest($"Not possible to withdraw the amount of {transaction.Amount}, beacuse of you reached your limit!");
             }
             return Ok(result);
         }
@@ -75,7 +74,7 @@ namespace API.Controller
         //PUT: api/Transaction/UpdateTransaction
         [HttpPut]
         [Route("UpdateTransaction")]
-        public async Task<IActionResult> UpdateTransaction(int id, [FromBody] TransactionDto transaction)
+        public async Task<IActionResult> UpdateTransaction(int id, TransactionDto transaction)
         {
             if (transaction is null)
             {

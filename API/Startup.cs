@@ -8,6 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using API.Repositories;
+using API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -30,6 +34,18 @@ namespace API
                 });
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
@@ -38,6 +54,7 @@ namespace API
             services.AddControllers().AddJsonOptions(options => 
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
 
@@ -60,6 +77,9 @@ namespace API
             app.UseRouting();
 
             app.UseCors();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

@@ -10,8 +10,7 @@ namespace API.Repositories
         Task<IEnumerable<UserModel>> GetAllUsers();
         Task<UserModel> GetUserByEmail(string email);
         Task<IEnumerable<UserModel>> GetUsersByLastName(string lastName);
-        Task<UserModel> CreateUser(UserInputDto user);
-        Task<UserModel> UpdateUser(int id, UserInputDto user);
+        Task<UserModel> UpdateUser(int id, RegisterDto user);
         Task<UserModel> DeleteUser(int id);
     }
 }

@@ -51,6 +51,11 @@ namespace API.Repositories
         {
             var user = await _dataContext.Users.FindAsync(transaction.UserId);
 
+            if(user.Balance + transaction.Amount < -1000)
+            {
+                return null;
+            }
+
             user.Balance += transaction.Amount;
 
             var result = new TransactionModel

@@ -36,24 +36,7 @@ namespace API.Repositories
             return await _dataContext.Users.Where(x => x.LastName == lastName).ToListAsync();
         }
 
-         public async Task<UserModel> CreateUser(UserInputDto user)
-        {
-            var result = new UserModel
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                CreatedOn = DateTime.UtcNow,
-                Balance = user.Balance
-            };
-
-            await _dataContext.Users.AddAsync(result);
-            await _dataContext.SaveChangesAsync();
-
-            return result;
-        }
-
-        public async Task<UserModel> UpdateUser(int id, UserInputDto user)
+        public async Task<UserModel> UpdateUser(int id, RegisterDto user)
         {
             var result = await _dataContext.Users.FindAsync(id);
 

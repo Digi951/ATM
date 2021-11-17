@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controller
 {
-    [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
         private readonly IUserRepository _userRepository;
 
@@ -30,6 +30,7 @@ namespace API.Controller
         }
 
         //GET: api/User/GetUserById/{id}
+        [Authorize]
         [HttpGet]
         [Route("GetUserById/{id}")]
         public async Task<ActionResult> GetUserById(int id)
@@ -43,6 +44,7 @@ namespace API.Controller
         }
 
         //GET: api/User/GetUserByEmail/{email}
+        [Authorize]
         [HttpGet]
         [Route("GetUserByEmail/{email}")]
         public async Task<ActionResult> GetUserByEmail(string email)
@@ -56,6 +58,7 @@ namespace API.Controller
         }
 
         //GET: api/User/GetUsersByLastName/{lastName}
+        [Authorize]
         [HttpGet]
         [Route("GetUsersByLastName/{lastName}")]
         public async Task<ActionResult> GetUsersByLastName(string lastName)
@@ -68,28 +71,11 @@ namespace API.Controller
             return Ok(user);
         }
 
-        //POST: api/User/CreateUser
-        [HttpPost]
-        [Route("CreateUser")]
-        public async Task<ActionResult<UserInputDto>> CreateUser([FromBody] UserInputDto user)
-        {
-            if (user is null)
-            {
-                return BadRequest();
-            }
-            var result = await _userRepository.CreateUser(user);
-            
-            if (result is null)
-            {
-                return BadRequest();
-            }
-            return Ok(result);
-        }
-
         //PUT: api/User/UpdateUser/{id}
+        [Authorize]
         [HttpPut]
         [Route("UpdateUser/{id}")]
-        public async Task<ActionResult<UserModel>> UpdateUser(int id, [FromBody] UserInputDto user)
+        public async Task<ActionResult<UserModel>> UpdateUser(int id, RegisterDto user)
         {
             if (id == 0)
             {
@@ -106,6 +92,7 @@ namespace API.Controller
         }
 
         //POST: api/User/DeleteUser/{id}
+        [Authorize]
         [HttpDelete]
         [Route("DeleteUser/{id}")]
         public async Task<ActionResult> DeleteUser(int id)
