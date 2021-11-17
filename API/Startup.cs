@@ -1,17 +1,11 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
-using API.Repositories;
-using API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using API.Extensions;
 
 namespace API
 {
@@ -25,6 +19,9 @@ namespace API
         
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationServices(_configuration);
+            services.AddIdentityServices(_configuration);
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -34,29 +31,8 @@ namespace API
                 });
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"])),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
-            });
-
             services.AddControllers().AddJsonOptions(options => 
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITransactionRepository, TransactionRepository>();
 
             services.AddSwaggerGen(c =>
             {

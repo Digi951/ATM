@@ -1,11 +1,15 @@
+using API.Model;
 using Microsoft.EntityFrameworkCore;
 
-public class DataContext : DbContext
+namespace API.Data
 {
-    public DataContext(DbContextOptions options) : base(options)
+    public class DataContext : DbContext
     {
-    }
+        public DataContext(DbContextOptions options) : base(options)
+        {
+        }
 
-    public DbSet<TransactionModel> Transactions { get; set; }
-    public DbSet<UserModel> Users { get; set; }
+        public DbSet<TransactionModel> Transactions { get; set; }
+        public DbSet<UserModel> Users { get; set; }
+    }
 }

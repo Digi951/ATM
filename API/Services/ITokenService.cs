@@ -1,3 +1,5 @@
+using API.Model;
+
 namespace API.Services
 {
     public interface ITokenService
