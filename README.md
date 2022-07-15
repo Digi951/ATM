@@ -1,3 +1,3 @@
 # ATM 
 
-This is and simple API for banking transactions
+This is a simple API for banking transactions
